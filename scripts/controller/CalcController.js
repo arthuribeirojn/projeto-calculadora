@@ -1,11 +1,14 @@
 class CalcController {
   constructor() {
+    this._operation = [];
     this._locale = "pt-BR";
     this._displayCalcEl = document.querySelector("#display");
     this._timeEl = document.querySelector("#hora");
     this._dateEl = document.querySelector("#data");
     this._currentDate;
     this.initialize();
+    this.intButtonsEvents();
+   
   }
   initialize() {
     this.setDisplayDateTime();
@@ -14,8 +17,93 @@ class CalcController {
     }, 1000);
   }
 
+  addEventListenerAll(element, events, fn) {
+    events.split(" ").forEach((event) => {
+      element.addEventListener(event, fn, false);
+    });
+  }
+
+  clearAll() {
+    this._operation = [];
+  }
+  clearEntry() {
+    this._operation.pop();
+  }
+  addOperator(value) {
+    this._operation.push(value);
+    console.log(this._operation);
+  }
+  setError() {
+    this.displayCalc = "ERROR";
+  }
+
+  execBtn(value) {
+    switch (value) {
+      case "ac":
+        this.clearAll();
+        break;
+      case "ce":
+        this.clearEntry();
+        break;
+      case "porcento":
+        //this.()
+        break;
+      case "divisao":
+        this._dateEl();
+        break;
+      case "multipicaçao":
+        this._dateEl();
+        break;
+      case "soma":
+        this._dateEl();
+        break;
+      case "subtraçao":
+        this._dateEl();
+        break;
+      case "igual":
+        this._dateEl();
+        break;
+
+      case "0":
+      case "1":
+      case "2":
+      case "3":
+      case "4":
+      case "5":
+      case "6":
+      case "7":
+      case "8":
+      case "9":
+        this.addOperator(parseInt(value));
+        break;
+      default:
+        this.setError();
+        break;
+    }
+  }
+
+  intButtonsEvents() {
+    let buttons = document.querySelectorAll("#buttons > g, #parts > g");
+
+    buttons.forEach((btn, index) => {
+      this.addEventListenerAll(btn, "click drag ", (e) => {
+        let textBtn = btn.className.baseVal.replace("btn-", "");
+
+        this.execBtn(textBtn);
+      });
+
+      this.addEventListenerAll(btn, "mouseover mouseup mousedown", (e) => {
+        btn.style.cursor = "pointer";
+      });
+    });
+  }
+
   setDisplayDateTime() {
-    this.displayDate = this.currentDate.toLocaleDateString(this._locale, {day:"2-digit", month:"short", year: "numeric"});
+    this.displayDate = this.currentDate.toLocaleDateString(this._locale, {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+    });
     this.displayTime = this.currentDate.toLocaleTimeString(this._locale);
   }
 
