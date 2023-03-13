@@ -8,7 +8,6 @@ class CalcController {
     this._currentDate;
     this.initialize();
     this.intButtonsEvents();
-   
   }
   initialize() {
     this.setDisplayDateTime();
@@ -29,9 +28,51 @@ class CalcController {
   clearEntry() {
     this._operation.pop();
   }
-  addOperator(value) {
+
+  getLastOperation() {
+    return this._operation[this._operation.length - 1];
+  }
+  setLastOperation(value) {
+    this._operation[this._operation.length - 1] = value;
+  }
+  isOperator(value) {
+    return ["+", "-", "*", "%", "/"].indexOf(value) > -1;
+  }
+  pushOperation(value) {
     this._operation.push(value);
+    if (this._operation.length > 3) {
+      this.calc();
+    } else {
+    }
+  }
+  calc() {
+    let last = this._operation.pop();
+    let result = eval(this._operation.join(""));
+    this._operation = [result, last];
     console.log(this._operation);
+  }
+  setLastNumberToDisplay() {}
+
+  addOperation(value) {
+    // console.log("A", value, isNaN(this.getLastOperation()));
+    if (isNaN(this.getLastOperation())) {
+      if (this.isOperator(value)) {
+        this.setLastOperation(value);
+        console.log(value);
+      } else if (isNaN(value)) {
+        console.log("Outra coisa", value);
+      } else {
+        this.pushOperation(value);
+      }
+    } else {
+      if (this.isOperator(value)) {
+        this.pushOperation(value);
+      } else {
+        let newValue = this.getLastOperation().toString() + value.toString();
+        this.setLastOperation(parseInt(newValue));
+        this.setLastNumberToDisplay();
+      }
+    }
   }
   setError() {
     this.displayCalc = "ERROR";
@@ -46,22 +87,24 @@ class CalcController {
         this.clearEntry();
         break;
       case "porcento":
-        //this.()
+        this.addOperation("%");
         break;
       case "divisao":
-        this._dateEl();
+        this.addOperation("/");
         break;
-      case "multipicaçao":
-        this._dateEl();
+      case "multiplicacao":
+        this.addOperation("*");
         break;
       case "soma":
-        this._dateEl();
+        this.addOperation("+");
         break;
-      case "subtraçao":
-        this._dateEl();
+      case "subtracao":
+        this.addOperation("-");
         break;
       case "igual":
-        this._dateEl();
+        break;
+      case "ponto":
+        this.addOperation(".");
         break;
 
       case "0":
@@ -74,7 +117,7 @@ class CalcController {
       case "7":
       case "8":
       case "9":
-        this.addOperator(parseInt(value));
+        this.addOperation(parseInt(value));
         break;
       default:
         this.setError();
